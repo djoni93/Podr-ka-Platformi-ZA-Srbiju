@@ -51,7 +51,6 @@ def generisi_pdf(ime, prezime, jmbg, adresa, opstina, ime_roditelja, datum_rodje
         fontSize=16,
         spaceAfter=20,
         alignment=1,  # Center alignment
-        fontName=font_name,
         fontName='Helvetica-Bold'
     )
     
