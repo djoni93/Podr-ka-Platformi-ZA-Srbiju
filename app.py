@@ -156,6 +156,76 @@ def generisi_pdf_za_jmbg(jmbg):
     
     return redirect('/pretraga')
 
+@app.route('/izmeni', methods=['GET', 'POST'])
+def izmeni_podatke():
+    if request.method == 'POST':
+        if 'pretrazi' in request.form:
+            # Pretraga osobe
+            jmbg = request.form.get('jmbg', '').strip()
+            
+            if not jmbg:
+                flash('Molimo unesite JMBG za pretragu!', 'error')
+                return render_template('izmeni.html')
+            
+            conn = sqlite3.connect('database.db')
+            c = conn.cursor()
+            c.execute("SELECT * FROM podrska WHERE jmbg = ?", (jmbg,))
+            osoba = c.fetchone()
+            conn.close()
+            
+            if osoba:
+                flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
+                return render_template('izmeni.html', osoba=osoba, edit_mode=True)
+            else:
+                flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
+                return render_template('izmeni.html')
+    
+    # Ako je GET request sa JMBG parametrom, automatski pretraži
+    if request.method == 'GET' and request.args.get('jmbg'):
+        jmbg = request.args.get('jmbg').strip()
+        
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM podrska WHERE jmbg = ?", (jmbg,))
+        osoba = c.fetchone()
+        conn.close()
+        
+        if osoba:
+            flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
+            return render_template('izmeni.html', osoba=osoba, edit_mode=True)
+        else:
+            flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
+        
+        elif 'sacuvaj' in request.form:
+            # Čuvanje izmenjenih podataka
+            id_osobe = request.form.get('id')
+            ime = request.form.get('ime')
+            prezime = request.form.get('prezime')
+            jmbg = request.form.get('jmbg')
+            adresa = request.form.get('adresa')
+            opstina = request.form.get('opstina')
+            broj_telefona = request.form.get('broj_telefona')
+            email = request.form.get('email')
+            
+            try:
+                conn = sqlite3.connect('database.db')
+                c = conn.cursor()
+                c.execute("""
+                    UPDATE podrska 
+                    SET ime=?, prezime=?, jmbg=?, adresa=?, opstina=?, broj_telefona=?, email=?
+                    WHERE id=?
+                """, (ime, prezime, jmbg, adresa, opstina, broj_telefona, email, id_osobe))
+                conn.commit()
+                conn.close()
+                flash('Podaci su uspešno ažurirani!', 'success')
+                return redirect('/izmeni')
+            except sqlite3.IntegrityError:
+                flash('Osoba sa ovim JMBG-om već postoji!', 'error')
+            except Exception as e:
+                flash(f'Greška pri ažuriranju podataka: {str(e)}', 'error')
+    
+    return render_template('izmeni.html')
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False) 

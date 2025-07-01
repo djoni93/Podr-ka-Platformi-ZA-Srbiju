@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pretraga - Podrška Platformi ZA Srbiju</title>
+    <title>Izmena podataka - Podrška Platformi ZA Srbiju</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,7 +11,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -50,17 +50,21 @@
         .search-form {
             text-align: center;
             margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
         }
-        input[type="text"] {
-            width: 300px;
-            padding: 15px;
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
-            margin-right: 10px;
+            margin-bottom: 15px;
             transition: border-color 0.3s ease;
+            box-sizing: border-box;
         }
-        input[type="text"]:focus {
+        input[type="text"]:focus, input[type="email"]:focus {
             outline: none;
             border-color: #c6363c;
             box-shadow: 0 0 0 3px rgba(198, 54, 60, 0.1);
@@ -68,17 +72,24 @@
         button {
             background: linear-gradient(45deg, #c6363c, #0c4076);
             color: white;
-            padding: 15px 30px;
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 5px;
         }
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(198, 54, 60, 0.3);
+        }
+        .save-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        .save-btn:hover {
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
         }
         .flash-message {
             padding: 15px;
@@ -96,49 +107,23 @@
             color: white;
             border-left: 5px solid #721c24;
         }
-        .person-card {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 2px solid #0c4076;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        .person-info {
+        .edit-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-top: 20px;
         }
-        .info-item {
-            display: flex;
-            align-items: center;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .info-label {
+        .form-group label {
+            display: block;
             font-weight: bold;
             color: #0c4076;
-            min-width: 100px;
+            margin-bottom: 5px;
         }
-        .info-value {
-            color: #333;
-            margin-left: 10px;
-        }
-        .generate-btn {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
         .nav-links {
             text-align: center;
@@ -172,6 +157,14 @@
         .red { background-color: #c6363c; }
         .blue { background-color: #0c4076; }
         .white { background-color: #ffffff; border: 1px solid #ddd; }
+        .person-info {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #0c4076;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -187,7 +180,7 @@
         </div>
         
         <div class="content-container">
-            <h2>🔍 Pretraga po JMBG-u</h2>
+            <h2>✏️ Izmena postojećih podataka</h2>
             
             <!-- Flash messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -200,64 +193,73 @@
                 {% endif %}
             {% endwith %}
             
+            {% if not edit_mode %}
             <div class="search-form">
+                <h3 style="color: #0c4076; margin-bottom: 20px;">🔍 Pretražite osobu po JMBG-u</h3>
                 <form method="POST">
                     <input type="text" name="jmbg" placeholder="Unesite JMBG (13 cifara)" 
-                           value="{{ request.form.get('jmbg', '') }}" maxlength="13" pattern="[0-9]{13}">
-                    <button type="submit">🔍 Pretraži</button>
+                           value="{{ request.form.get('jmbg', request.args.get('jmbg', '')) }}" maxlength="13" pattern="[0-9]{13}" required>
+                    <button type="submit" name="pretrazi">🔍 Pretraži</button>
                 </form>
             </div>
+            {% endif %}
             
-            {% if osoba %}
-            <div class="person-card">
+            {% if osoba and edit_mode %}
+            <div class="person-info">
                 <h3 style="color: #c6363c; text-align: center; margin-bottom: 20px;">
-                    📋 Podaci o osobi
+                    ✏️ Izmena podataka za: {{ osoba[1] }} {{ osoba[2] }}
                 </h3>
-                <div class="person-info">
-                    <div class="info-item">
-                        <span class="info-label">Ime:</span>
-                        <span class="info-value">{{ osoba[1] }}</span>
+                
+                <form method="POST" class="edit-form">
+                    <input type="hidden" name="id" value="{{ osoba[0] }}">
+                    
+                    <div class="form-group">
+                        <label for="ime">Ime:</label>
+                        <input type="text" id="ime" name="ime" value="{{ osoba[1] }}" required>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Prezime:</span>
-                        <span class="info-value">{{ osoba[2] }}</span>
+                    
+                    <div class="form-group">
+                        <label for="prezime">Prezime:</label>
+                        <input type="text" id="prezime" name="prezime" value="{{ osoba[2] }}" required>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">JMBG:</span>
-                        <span class="info-value">{{ osoba[3] }}</span>
+                    
+                    <div class="form-group">
+                        <label for="jmbg">JMBG:</label>
+                        <input type="text" id="jmbg" name="jmbg" value="{{ osoba[3] }}" maxlength="13" pattern="[0-9]{13}" required>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Adresa:</span>
-                        <span class="info-value">{{ osoba[4] }}</span>
+                    
+                    <div class="form-group">
+                        <label for="broj_telefona">Broj telefona:</label>
+                        <input type="text" id="broj_telefona" name="broj_telefona" value="{{ osoba[6] or '' }}">
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Opština:</span>
-                        <span class="info-value">{{ osoba[5] }}</span>
+                    
+                    <div class="form-group full-width">
+                        <label for="adresa">Adresa:</label>
+                        <input type="text" id="adresa" name="adresa" value="{{ osoba[4] }}" required>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Telefon:</span>
-                        <span class="info-value">{{ osoba[6] or 'Nije uneto' }}</span>
+                    
+                    <div class="form-group">
+                        <label for="opstina">Opština:</label>
+                        <input type="text" id="opstina" name="opstina" value="{{ osoba[5] }}" required>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">{{ osoba[7] or 'Nije uneto' }}</span>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="{{ osoba[7] or '' }}">
                     </div>
-                </div>
-                <div style="text-align: center;">
-                    <a href="{{ url_for('generisi_pdf_za_jmbg', jmbg=osoba[3]) }}" class="generate-btn">
-                        📄 Generiši PDF formular
-                    </a>
-                    <a href="{{ url_for('izmeni_podatke') }}?jmbg={{ osoba[3] }}" style="background: linear-gradient(45deg, #ffc107, #fd7e14); color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; display: inline-block; margin-left: 10px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-                        ✏️ Izmeni podatke
-                    </a>
-                </div>
+                    
+                    <div class="form-group full-width" style="text-align: center; margin-top: 20px;">
+                        <button type="submit" name="sacuvaj" class="save-btn">💾 Sačuvaj izmene</button>
+                        <a href="{{ url_for('izmeni_podatke') }}" class="btn" style="text-decoration: none; display: inline-block; background: linear-gradient(45deg, #6c757d, #495057); color: white; padding: 12px 25px; border-radius: 8px; margin-left: 10px;">❌ Otkaži</a>
+                    </div>
+                </form>
             </div>
             {% endif %}
         </div>
         
         <div class="nav-links">
             <a href="{{ url_for('forma') }}">📝 Unos novih podataka</a>
-            <a href="{{ url_for('pretraga') }}">🔍 Nova pretraga</a>
+            <a href="{{ url_for('pretraga') }}">🔍 Pretraga</a>
             <a href="{{ url_for('izmeni_podatke') }}">✏️ Izmena podataka</a>
         </div>
     </div>
