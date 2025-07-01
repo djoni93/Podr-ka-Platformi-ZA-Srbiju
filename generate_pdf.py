@@ -5,13 +5,24 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import os
+import tempfile
 
 def generisi_pdf(ime, prezime, jmbg, adresa, opstina):
-    # Generisanje imena fajla
-    filename = f"formular_{ime}_{prezime}.pdf"
+    # Generisanje imena fajla - ukloni specijalne karaktere
+    safe_ime = "".join(c for c in ime if c.isalnum() or c in (' ', '-', '_')).rstrip()
+    safe_prezime = "".join(c for c in prezime if c.isalnum() or c in (' ', '-', '_')).rstrip()
+    filename = f"formular_{safe_ime}_{safe_prezime}.pdf"
+    
+    # Kreiranje privremenog direktorijuma za PDF fajlove
+    temp_dir = os.path.join(os.getcwd(), 'temp_pdfs')
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    
+    # Puna putanja do fajla
+    filepath = os.path.join(temp_dir, filename)
     
     # Kreiranje PDF dokumenta
-    doc = SimpleDocTemplate(filename, pagesize=A4)
+    doc = SimpleDocTemplate(filepath, pagesize=A4)
     styles = getSampleStyleSheet()
     story = []
     
@@ -61,8 +72,8 @@ def generisi_pdf(ime, prezime, jmbg, adresa, opstina):
     
     # Generisanje PDF-a
     doc.build(story)
-    print(f"PDF je kreiran: {filename}")
-    return filename
+    print(f"PDF je kreiran: {filepath}")
+    return filepath
 
 if __name__ == "__main__":
     # Example usage
