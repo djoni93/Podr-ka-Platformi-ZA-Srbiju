@@ -11,6 +11,8 @@ app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
+    
+    # Kreiraj tabelu ako ne postoji
     c.execute('''CREATE TABLE IF NOT EXISTS podrska (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         ime TEXT,
@@ -34,6 +36,37 @@ def init_db():
         datum_potpisa TEXT,
         mesto_potpisa TEXT
     )''')
+    
+    # Proveri da li postoje nove kolone i dodaj ih ako ne postoje
+    c.execute("PRAGMA table_info(podrska)")
+    columns = [column[1] for column in c.fetchall()]
+    
+    # Lista novih kolona koje treba dodati
+    new_columns = [
+        ('ime_roditelja', 'TEXT'),
+        ('datum_rodjenja', 'TEXT'),
+        ('mesto_rodjenja', 'TEXT'),
+        ('adresa_boravista', 'TEXT'),
+        ('nacionalna_manjina', 'TEXT'),
+        ('ime_elektora', 'TEXT'),
+        ('prezime_elektora', 'TEXT'),
+        ('jmbg_elektora', 'TEXT'),
+        ('adresa_elektora', 'TEXT'),
+        ('opstina_elektora', 'TEXT'),
+        ('adresa_boravista_elektora', 'TEXT'),
+        ('datum_potpisa', 'TEXT'),
+        ('mesto_potpisa', 'TEXT')
+    ]
+    
+    # Dodaj nove kolone ako ne postoje
+    for column_name, column_type in new_columns:
+        if column_name not in columns:
+            try:
+                c.execute(f"ALTER TABLE podrska ADD COLUMN {column_name} {column_type}")
+                print(f"Dodata nova kolona: {column_name}")
+            except Exception as e:
+                print(f"Greška pri dodavanju kolone {column_name}: {e}")
+    
     conn.commit()
     conn.close()
 
