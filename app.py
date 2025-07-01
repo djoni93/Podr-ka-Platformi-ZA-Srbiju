@@ -19,7 +19,20 @@ def init_db():
         adresa TEXT,
         opstina TEXT,
         broj_telefona TEXT,
-        email TEXT
+        email TEXT,
+        ime_roditelja TEXT,
+        datum_rodjenja TEXT,
+        mesto_rodjenja TEXT,
+        adresa_boravista TEXT,
+        nacionalna_manjina TEXT,
+        ime_elektora TEXT,
+        prezime_elektora TEXT,
+        jmbg_elektora TEXT,
+        adresa_elektora TEXT,
+        opstina_elektora TEXT,
+        adresa_boravista_elektora TEXT,
+        datum_potpisa TEXT,
+        mesto_potpisa TEXT
     )''')
     conn.commit()
     conn.close()
@@ -47,16 +60,37 @@ def forma():
         ime = request.form['ime']
         prezime = request.form['prezime']
         jmbg = request.form['jmbg']
+        ime_roditelja = request.form['ime_roditelja']
+        datum_rodjenja = request.form['datum_rodjenja']
+        mesto_rodjenja = request.form['mesto_rodjenja']
         adresa = request.form['adresa']
+        adresa_boravista = request.form.get('adresa_boravista', '')
         opstina = request.form['opstina']
-        broj_telefona = request.form['broj_telefona']
-        email = request.form['email']
+        broj_telefona = request.form.get('broj_telefona', '')
+        email = request.form.get('email', '')
+        nacionalna_manjina = request.form['nacionalna_manjina']
+        ime_elektora = request.form['ime_elektora']
+        prezime_elektora = request.form['prezime_elektora']
+        jmbg_elektora = request.form['jmbg_elektora']
+        adresa_elektora = request.form['adresa_elektora']
+        opstina_elektora = request.form['opstina_elektora']
+        adresa_boravista_elektora = request.form.get('adresa_boravista_elektora', '')
+        datum_potpisa = request.form['datum_potpisa']
+        mesto_potpisa = request.form['mesto_potpisa']
 
         try:
             conn = sqlite3.connect('database.db')
             c = conn.cursor()
-            c.execute("INSERT INTO podrska (ime, prezime, jmbg, adresa, opstina, broj_telefona, email) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                      (ime, prezime, jmbg, adresa, opstina, broj_telefona, email))
+            c.execute("""INSERT INTO podrska (
+                ime, prezime, jmbg, ime_roditelja, datum_rodjenja, mesto_rodjenja, 
+                adresa, adresa_boravista, opstina, broj_telefona, email, nacionalna_manjina,
+                ime_elektora, prezime_elektora, jmbg_elektora, adresa_elektora, opstina_elektora,
+                adresa_boravista_elektora, datum_potpisa, mesto_potpisa
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      (ime, prezime, jmbg, ime_roditelja, datum_rodjenja, mesto_rodjenja,
+                       adresa, adresa_boravista, opstina, broj_telefona, email, nacionalna_manjina,
+                       ime_elektora, prezime_elektora, jmbg_elektora, adresa_elektora, opstina_elektora,
+                       adresa_boravista_elektora, datum_potpisa, mesto_potpisa))
             conn.commit()
             conn.close()
             flash('Podaci su uspešno sačuvani u bazu!', 'success')
@@ -107,9 +141,19 @@ def generisi_pdf_za_jmbg(jmbg):
         
         if osoba:
             ime, prezime, jmbg, adresa, opstina = osoba[1], osoba[2], osoba[3], osoba[4], osoba[5]
+            ime_roditelja, datum_rodjenja, mesto_rodjenja = osoba[8], osoba[9], osoba[10]
+            adresa_boravista, nacionalna_manjina = osoba[11], osoba[12]
+            ime_elektora, prezime_elektora, jmbg_elektora = osoba[13], osoba[14], osoba[15]
+            adresa_elektora, opstina_elektora, adresa_boravista_elektora = osoba[16], osoba[17], osoba[18]
+            datum_potpisa, mesto_potpisa = osoba[19], osoba[20]
+            broj_telefona, email = osoba[6], osoba[7]
+            
             print(f"Generisanje PDF-a za: {ime} {prezime}")
             
-            filename = generisi_pdf(ime, prezime, jmbg, adresa, opstina)
+            filename = generisi_pdf(ime, prezime, jmbg, adresa, opstina, ime_roditelja, datum_rodjenja, mesto_rodjenja,
+                                  adresa_boravista, nacionalna_manjina, ime_elektora, prezime_elektora, jmbg_elektora,
+                                  adresa_elektora, opstina_elektora, adresa_boravista_elektora, datum_potpisa, mesto_potpisa,
+                                  broj_telefona, email)
             print(f"PDF fajl kreiran: {filename}")
             
             # Proveri da li fajl postoji
@@ -186,19 +230,38 @@ def izmeni_podatke():
             ime = request.form.get('ime')
             prezime = request.form.get('prezime')
             jmbg = request.form.get('jmbg')
+            ime_roditelja = request.form.get('ime_roditelja')
+            datum_rodjenja = request.form.get('datum_rodjenja')
+            mesto_rodjenja = request.form.get('mesto_rodjenja')
             adresa = request.form.get('adresa')
+            adresa_boravista = request.form.get('adresa_boravista', '')
             opstina = request.form.get('opstina')
-            broj_telefona = request.form.get('broj_telefona')
-            email = request.form.get('email')
+            broj_telefona = request.form.get('broj_telefona', '')
+            email = request.form.get('email', '')
+            nacionalna_manjina = request.form.get('nacionalna_manjina')
+            ime_elektora = request.form.get('ime_elektora')
+            prezime_elektora = request.form.get('prezime_elektora')
+            jmbg_elektora = request.form.get('jmbg_elektora')
+            adresa_elektora = request.form.get('adresa_elektora')
+            opstina_elektora = request.form.get('opstina_elektora')
+            adresa_boravista_elektora = request.form.get('adresa_boravista_elektora', '')
+            datum_potpisa = request.form.get('datum_potpisa')
+            mesto_potpisa = request.form.get('mesto_potpisa')
             
             try:
                 conn = sqlite3.connect('database.db')
                 c = conn.cursor()
                 c.execute("""
                     UPDATE podrska 
-                    SET ime=?, prezime=?, jmbg=?, adresa=?, opstina=?, broj_telefona=?, email=?
+                    SET ime=?, prezime=?, jmbg=?, ime_roditelja=?, datum_rodjenja=?, mesto_rodjenja=?,
+                        adresa=?, adresa_boravista=?, opstina=?, broj_telefona=?, email=?, nacionalna_manjina=?,
+                        ime_elektora=?, prezime_elektora=?, jmbg_elektora=?, adresa_elektora=?, opstina_elektora=?,
+                        adresa_boravista_elektora=?, datum_potpisa=?, mesto_potpisa=?
                     WHERE id=?
-                """, (ime, prezime, jmbg, adresa, opstina, broj_telefona, email, id_osobe))
+                """, (ime, prezime, jmbg, ime_roditelja, datum_rodjenja, mesto_rodjenja,
+                      adresa, adresa_boravista, opstina, broj_telefona, email, nacionalna_manjina,
+                      ime_elektora, prezime_elektora, jmbg_elektora, adresa_elektora, opstina_elektora,
+                      adresa_boravista_elektora, datum_potpisa, mesto_potpisa, id_osobe))
                 conn.commit()
                 conn.close()
                 flash('Podaci su uspešno ažurirani!', 'success')
@@ -225,6 +288,32 @@ def izmeni_podatke():
             flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
     
     return render_template('izmeni.html')
+
+@app.route('/obrisi/<jmbg>')
+def obrisi_podatke(jmbg):
+    try:
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        
+        # Prvo proveri da li osoba postoji
+        c.execute("SELECT ime, prezime FROM podrska WHERE jmbg = ?", (jmbg,))
+        osoba = c.fetchone()
+        
+        if osoba:
+            ime, prezime = osoba[0], osoba[1]
+            # Obriši osobu iz baze
+            c.execute("DELETE FROM podrska WHERE jmbg = ?", (jmbg,))
+            conn.commit()
+            conn.close()
+            flash(f'Podaci za {ime} {prezime} su uspešno obrisani iz baze!', 'success')
+        else:
+            conn.close()
+            flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
+            
+    except Exception as e:
+        flash(f'Greška pri brisanju podataka: {str(e)}', 'error')
+    
+    return redirect('/pretraga')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

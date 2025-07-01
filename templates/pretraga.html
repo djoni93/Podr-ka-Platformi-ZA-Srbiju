@@ -214,33 +214,88 @@
                     📋 Podaci o osobi
                 </h3>
                 <div class="person-info">
-                    <div class="info-item">
-                        <span class="info-label">Ime:</span>
-                        <span class="info-value">{{ osoba[1] }}</span>
+                    <h4 style="color: #0c4076; margin-bottom: 15px;">📋 Podaci o biraču:</h4>
+                    <div class="person-info">
+                        <div class="info-item">
+                            <span class="info-label">Ime i prezime:</span>
+                            <span class="info-value">{{ osoba[1] }} {{ osoba[2] }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">JMBG:</span>
+                            <span class="info-value">{{ osoba[3] }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ime roditelja:</span>
+                            <span class="info-value">{{ osoba[8] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Datum rođenja:</span>
+                            <span class="info-value">{{ osoba[9] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Mesto rođenja:</span>
+                            <span class="info-value">{{ osoba[10] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Adresa prebivališta:</span>
+                            <span class="info-value">{{ osoba[4] }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Adresa boravišta (interno raseljeni):</span>
+                            <span class="info-value">{{ osoba[11] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Opština:</span>
+                            <span class="info-value">{{ osoba[5] }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Telefon:</span>
+                            <span class="info-value">{{ osoba[6] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">{{ osoba[7] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Nacionalna manjina:</span>
+                            <span class="info-value">{{ osoba[12] or 'Nije uneto' }}</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">Prezime:</span>
-                        <span class="info-value">{{ osoba[2] }}</span>
+                    
+                    <h4 style="color: #0c4076; margin: 20px 0 15px 0;">👤 Podaci o elektoru:</h4>
+                    <div class="person-info">
+                        <div class="info-item">
+                            <span class="info-label">Ime i prezime elektora:</span>
+                            <span class="info-value">{{ osoba[13] or 'Nije uneto' }} {{ osoba[14] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">JMBG elektora:</span>
+                            <span class="info-value">{{ osoba[15] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Adresa elektora:</span>
+                            <span class="info-value">{{ osoba[16] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Opština elektora:</span>
+                            <span class="info-value">{{ osoba[17] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Adresa boravišta elektora (interno raseljeni):</span>
+                            <span class="info-value">{{ osoba[18] or 'Nije uneto' }}</span>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">JMBG:</span>
-                        <span class="info-value">{{ osoba[3] }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Adresa:</span>
-                        <span class="info-value">{{ osoba[4] }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Opština:</span>
-                        <span class="info-value">{{ osoba[5] }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Telefon:</span>
-                        <span class="info-value">{{ osoba[6] or 'Nije uneto' }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">{{ osoba[7] or 'Nije uneto' }}</span>
+                    
+                    <h4 style="color: #0c4076; margin: 20px 0 15px 0;">📅 Podaci o potpisu:</h4>
+                    <div class="person-info">
+                        <div class="info-item">
+                            <span class="info-label">Datum potpisa:</span>
+                            <span class="info-value">{{ osoba[19] or 'Nije uneto' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Mesto potpisa:</span>
+                            <span class="info-value">{{ osoba[20] or 'Nije uneto' }}</span>
+                        </div>
                     </div>
                 </div>
                 <div style="text-align: center;">
@@ -250,12 +305,16 @@
                     <a href="{{ url_for('izmeni_podatke') }}?jmbg={{ osoba[3] }}" style="background: linear-gradient(45deg, #ffc107, #fd7e14); color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; display: inline-block; margin-left: 10px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease;">
                         ✏️ Izmeni podatke
                     </a>
+                    <a href="{{ url_for('obrisi_podatke', jmbg=osoba[3]) }}" onclick="return confirm('Da li ste sigurni da želite da obrišete podatke za {{ osoba[1] }} {{ osoba[2] }}? Ova akcija se ne može poništiti.')" style="background: linear-gradient(45deg, #dc3545, #fd7e14); color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; display: inline-block; margin-left: 10px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                        🗑️ Obriši podatke
+                    </a>
                 </div>
             </div>
             {% endif %}
         </div>
         
         <div class="nav-links">
+            <a href="{{ url_for('forma') }}" style="background: linear-gradient(45deg, #28a745, #20c997);">🏠 Početna</a>
             <a href="{{ url_for('forma') }}">📝 Unos novih podataka</a>
             <a href="{{ url_for('pretraga') }}">🔍 Nova pretraga</a>
             <a href="{{ url_for('izmeni_podatke') }}">✏️ Izmena podataka</a>

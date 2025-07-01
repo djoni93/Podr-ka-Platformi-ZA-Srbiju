@@ -229,13 +229,28 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="broj_telefona">Broj telefona:</label>
-                        <input type="text" id="broj_telefona" name="broj_telefona" value="{{ osoba[6] or '' }}">
+                        <label for="ime_roditelja">Ime roditelja:</label>
+                        <input type="text" id="ime_roditelja" name="ime_roditelja" value="{{ osoba[8] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="datum_rodjenja">Datum rođenja:</label>
+                        <input type="date" id="datum_rodjenja" name="datum_rodjenja" value="{{ osoba[9] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mesto_rodjenja">Mesto rođenja:</label>
+                        <input type="text" id="mesto_rodjenja" name="mesto_rodjenja" value="{{ osoba[10] or '' }}" required>
                     </div>
                     
                     <div class="form-group full-width">
-                        <label for="adresa">Adresa:</label>
+                        <label for="adresa">Adresa prebivališta:</label>
                         <input type="text" id="adresa" name="adresa" value="{{ osoba[4] }}" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="adresa_boravista">Adresa boravišta za interno raseljene:</label>
+                        <input type="text" id="adresa_boravista" name="adresa_boravista" value="{{ osoba[11] or '' }}">
                     </div>
                     
                     <div class="form-group">
@@ -244,8 +259,58 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="broj_telefona">Broj telefona:</label>
+                        <input type="text" id="broj_telefona" name="broj_telefona" value="{{ osoba[6] or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="email" id="email" name="email" value="{{ osoba[7] or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nacionalna_manjina">Nacionalna manjina:</label>
+                        <input type="text" id="nacionalna_manjina" name="nacionalna_manjina" value="{{ osoba[12] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ime_elektora">Ime elektora:</label>
+                        <input type="text" id="ime_elektora" name="ime_elektora" value="{{ osoba[13] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prezime_elektora">Prezime elektora:</label>
+                        <input type="text" id="prezime_elektora" name="prezime_elektora" value="{{ osoba[14] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jmbg_elektora">JMBG elektora:</label>
+                        <input type="text" id="jmbg_elektora" name="jmbg_elektora" value="{{ osoba[15] or '' }}" maxlength="13" pattern="[0-9]{13}" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="adresa_elektora">Adresa elektora:</label>
+                        <input type="text" id="adresa_elektora" name="adresa_elektora" value="{{ osoba[16] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="opstina_elektora">Opština elektora:</label>
+                        <input type="text" id="opstina_elektora" name="opstina_elektora" value="{{ osoba[17] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="adresa_boravista_elektora">Adresa boravišta elektora za interno raseljene:</label>
+                        <input type="text" id="adresa_boravista_elektora" name="adresa_boravista_elektora" value="{{ osoba[18] or '' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="datum_potpisa">Datum potpisa:</label>
+                        <input type="date" id="datum_potpisa" name="datum_potpisa" value="{{ osoba[19] or '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mesto_potpisa">Mesto potpisa:</label>
+                        <input type="text" id="mesto_potpisa" name="mesto_potpisa" value="{{ osoba[20] or '' }}" required>
                     </div>
                     
                     <div class="form-group full-width" style="text-align: center; margin-top: 20px;">
@@ -258,6 +323,7 @@
         </div>
         
         <div class="nav-links">
+            <a href="{{ url_for('forma') }}" style="background: linear-gradient(45deg, #28a745, #20c997);">🏠 Početna</a>
             <a href="{{ url_for('forma') }}">📝 Unos novih podataka</a>
             <a href="{{ url_for('pretraga') }}">🔍 Pretraga</a>
             <a href="{{ url_for('izmeni_podatke') }}">✏️ Izmena podataka</a>
