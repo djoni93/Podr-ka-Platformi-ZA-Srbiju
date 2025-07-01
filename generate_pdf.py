@@ -118,7 +118,7 @@ def generisi_pdf(ime, prezime, jmbg, adresa, opstina, ime_roditelja, datum_rodje
     if adresa_boravista_elektora:
         story.append(Paragraph(f"Место и адреса боравишта електора за интерно расељене: <b>{adresa_boravista_elektora}</b>", data_style))
     else:
-        story.append(Paragraph("Место и адреса боравишта електора за интерно расељене: ________________", data_style))
+        story.append(Paragraph("Место и адреса боравишta електора за интерно расељене: ________________", data_style))
     
     story.append(Paragraph(f"Општина/град: <b>{opstina_elektora or '________________'}</b>", data_style))
     story.append(Spacer(1, 20))
@@ -148,7 +148,7 @@ def generisi_pdf(ime, prezime, jmbg, adresa, opstina, ime_roditelja, datum_rodje
         leading=12
     )
     
-    story.append(Paragraph("У складу са чланом 101. став 2. Закона о националним саветима националних мањина („Службени гласник РС", бр. 72/09, 20/14 – УС, 55/14 и 47/18) накнада за оверу се не наплаћује.", napomena_style))
+    story.append(Paragraph("У складу са чланом 101. став 2. Закона о националним саветима националних мањина („Службени гласник РС“, бр. 72/09, 20/14 – УС, 55/14 и 47/18) накнада за оверу се не наплаћује.", napomena_style))
     story.append(Spacer(1, 15))
     
     # Mesto za overu
