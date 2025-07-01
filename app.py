@@ -180,22 +180,6 @@ def izmeni_podatke():
                 flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
                 return render_template('izmeni.html')
     
-    # Ako je GET request sa JMBG parametrom, automatski pretraži
-    if request.method == 'GET' and request.args.get('jmbg'):
-        jmbg = request.args.get('jmbg').strip()
-        
-        conn = sqlite3.connect('database.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM podrska WHERE jmbg = ?", (jmbg,))
-        osoba = c.fetchone()
-        conn.close()
-        
-        if osoba:
-            flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
-            return render_template('izmeni.html', osoba=osoba, edit_mode=True)
-        else:
-            flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
-        
         elif 'sacuvaj' in request.form:
             # Čuvanje izmenjenih podataka
             id_osobe = request.form.get('id')
@@ -223,6 +207,22 @@ def izmeni_podatke():
                 flash('Osoba sa ovim JMBG-om već postoji!', 'error')
             except Exception as e:
                 flash(f'Greška pri ažuriranju podataka: {str(e)}', 'error')
+    
+    # Ako je GET request sa JMBG parametrom, automatski pretraži
+    if request.method == 'GET' and request.args.get('jmbg'):
+        jmbg = request.args.get('jmbg').strip()
+        
+        conn = sqlite3.connect('database.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM podrska WHERE jmbg = ?", (jmbg,))
+        osoba = c.fetchone()
+        conn.close()
+        
+        if osoba:
+            flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
+            return render_template('izmeni.html', osoba=osoba, edit_mode=True)
+        else:
+            flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
     
     return render_template('izmeni.html')
 
