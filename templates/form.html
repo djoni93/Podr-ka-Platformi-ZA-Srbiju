@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Podrška Platformi ZA Srbiju</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #c6363c 0%, #ffffff 50%, #0c4076 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            color: #c6363c;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header .subtitle {
+            color: #0c4076;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0c4076;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="email"]:focus {
+            outline: none;
+            border-color: #c6363c;
+            box-shadow: 0 0 0 3px rgba(198, 54, 60, 0.1);
+        }
+        .required {
+            color: #c6363c;
+        }
+        button {
+            background: linear-gradient(45deg, #c6363c, #0c4076);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(198, 54, 60, 0.3);
+        }
+        .flash-message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .flash-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border-left: 5px solid #155724;
+        }
+        .flash-error {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            color: white;
+            border-left: 5px solid #721c24;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .nav-links a {
+            display: inline-block;
+            background: linear-gradient(45deg, #0c4076, #c6363c);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            margin: 0 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(12, 64, 118, 0.3);
+        }
+        .serbian-flag {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .flag-stripe {
+            width: 60px;
+            height: 20px;
+            margin: 0 2px;
+        }
+        .red { background-color: #c6363c; }
+        .blue { background-color: #0c4076; }
+        .white { background-color: #ffffff; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇷🇸 Podrška Platformi ZA Srbiju</h1>
+            <div class="subtitle">Sistem za upravljanje podrškom građana</div>
+            <div class="serbian-flag">
+                <div class="flag-stripe red"></div>
+                <div class="flag-stripe blue"></div>
+                <div class="flag-stripe white"></div>
+            </div>
+        </div>
+        
+        <div class="form-container">
+            <h2 style="color: #0c4076; text-align: center; margin-bottom: 30px;">📝 Unos novih podataka</h2>
+            
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="ime">Ime <span class="required">*</span></label>
+                    <input type="text" id="ime" name="ime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prezime">Prezime <span class="required">*</span></label>
+                    <input type="text" id="prezime" name="prezime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jmbg">JMBG <span class="required">*</span></label>
+                    <input type="text" id="jmbg" name="jmbg" required maxlength="13" pattern="[0-9]{13}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="adresa">Adresa <span class="required">*</span></label>
+                    <input type="text" id="adresa" name="adresa" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="opstina">Opština <span class="required">*</span></label>
+                    <input type="text" id="opstina" name="opstina" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="broj_telefona">Broj telefona</label>
+                    <input type="text" id="broj_telefona" name="broj_telefona">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                
+                <button type="submit">💾 Sačuvaj podatke</button>
+            </form>
+        </div>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('pretraga') }}">🔍 Pretraga po JMBG-u</a>
+        </div>
+    </div>
+</body>
+</html> 
