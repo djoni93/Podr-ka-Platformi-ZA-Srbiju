@@ -235,7 +235,7 @@
                     
                     <div class="form-group">
                         <label for="datum_rodjenja">Datum rođenja:</label>
-                        <input type="date" id="datum_rodjenja" name="datum_rodjenja" value="{{ osoba[9] or '' }}" required>
+                        <input type="text" id="datum_rodjenja" name="datum_rodjenja" value="{{ osoba[9] or '' }}" placeholder="DD-MM-YYYY" pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" required>
                     </div>
                     
                     <div class="form-group">
@@ -305,7 +305,7 @@
                     
                     <div class="form-group">
                         <label for="datum_potpisa">Datum potpisa:</label>
-                        <input type="date" id="datum_potpisa" name="datum_potpisa" value="{{ osoba[19] or '' }}" required>
+                        <input type="text" id="datum_potpisa" name="datum_potpisa" value="{{ osoba[19] or '' }}" placeholder="DD-MM-YYYY" pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" required>
                     </div>
                     
                     <div class="form-group">

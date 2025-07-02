@@ -3,6 +3,7 @@ import sqlite3
 from generate_pdf import generisi_pdf
 import os
 import time
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -87,6 +88,30 @@ def cleanup_old_pdfs():
 
 init_db()
 
+def konvertuj_datum_format(datum_string):
+    """Konvertuje datum iz YYYY-MM-DD u DD-MM-YYYY format i obrnuto"""
+    if not datum_string:
+        return ""
+    
+    try:
+        # Ako je već u DD-MM-YYYY formatu, vrati kao jeste
+        if len(datum_string) == 10 and datum_string[2] == '-' and datum_string[5] == '-':
+            return datum_string
+        
+        # Ako je u YYYY-MM-DD formatu, konvertuj u DD-MM-YYYY
+        if len(datum_string) == 10 and datum_string[4] == '-' and datum_string[7] == '-':
+            datum_obj = datetime.strptime(datum_string, '%Y-%m-%d')
+            return datum_obj.strftime('%d-%m-%Y')
+        
+        # Ako je u DD-MM-YYYY formatu, konvertuj u YYYY-MM-DD za čuvanje
+        if len(datum_string) == 10 and datum_string[2] == '-' and datum_string[5] == '-':
+            datum_obj = datetime.strptime(datum_string, '%d-%m-%Y')
+            return datum_obj.strftime('%Y-%m-%d')
+        
+        return datum_string
+    except:
+        return datum_string
+
 @app.route('/', methods=['GET', 'POST'])
 def forma():
     if request.method == 'POST':
@@ -94,7 +119,7 @@ def forma():
         prezime = request.form['prezime']
         jmbg = request.form['jmbg']
         ime_roditelja = request.form['ime_roditelja']
-        datum_rodjenja = request.form['datum_rodjenja']
+        datum_rodjenja = konvertuj_datum_format(request.form['datum_rodjenja'])
         mesto_rodjenja = request.form['mesto_rodjenja']
         adresa = request.form['adresa']
         adresa_boravista = request.form.get('adresa_boravista', '')
@@ -108,7 +133,7 @@ def forma():
         adresa_elektora = request.form['adresa_elektora']
         opstina_elektora = request.form['opstina_elektora']
         adresa_boravista_elektora = request.form.get('adresa_boravista_elektora', '')
-        datum_potpisa = request.form['datum_potpisa']
+        datum_potpisa = konvertuj_datum_format(request.form['datum_potpisa'])
         mesto_potpisa = request.form['mesto_potpisa']
 
         try:
@@ -152,8 +177,15 @@ def pretraga():
         conn.close()
         
         if osoba:
+            # Konvertuj datume za prikaz
+            osoba_list = list(osoba)
+            if osoba_list[9]:  # datum_rodjenja
+                osoba_list[9] = konvertuj_datum_format(osoba_list[9])
+            if osoba_list[19]:  # datum_potpisa
+                osoba_list[19] = konvertuj_datum_format(osoba_list[19])
+            
             flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
-            return render_template('pretraga.html', osoba=osoba)
+            return render_template('pretraga.html', osoba=tuple(osoba_list))
         else:
             flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
             return render_template('pretraga.html')
@@ -174,11 +206,11 @@ def generisi_pdf_za_jmbg(jmbg):
         
         if osoba:
             ime, prezime, jmbg, adresa, opstina = osoba[1], osoba[2], osoba[3], osoba[4], osoba[5]
-            ime_roditelja, datum_rodjenja, mesto_rodjenja = osoba[8], osoba[9], osoba[10]
+            ime_roditelja, datum_rodjenja, mesto_rodjenja = osoba[8], konvertuj_datum_format(osoba[9]), osoba[10]
             adresa_boravista, nacionalna_manjina = osoba[11], osoba[12]
             ime_elektora, prezime_elektora, jmbg_elektora = osoba[13], osoba[14], osoba[15]
             adresa_elektora, opstina_elektora, adresa_boravista_elektora = osoba[16], osoba[17], osoba[18]
-            datum_potpisa, mesto_potpisa = osoba[19], osoba[20]
+            datum_potpisa, mesto_potpisa = konvertuj_datum_format(osoba[19]), osoba[20]
             broj_telefona, email = osoba[6], osoba[7]
             
             print(f"Generisanje PDF-a za: {ime} {prezime}")
@@ -251,8 +283,15 @@ def izmeni_podatke():
             conn.close()
             
             if osoba:
+                # Konvertuj datume za prikaz
+                osoba_list = list(osoba)
+                if osoba_list[9]:  # datum_rodjenja
+                    osoba_list[9] = konvertuj_datum_format(osoba_list[9])
+                if osoba_list[19]:  # datum_potpisa
+                    osoba_list[19] = konvertuj_datum_format(osoba_list[19])
+                
                 flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
-                return render_template('izmeni.html', osoba=osoba, edit_mode=True)
+                return render_template('izmeni.html', osoba=tuple(osoba_list), edit_mode=True)
             else:
                 flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
                 return render_template('izmeni.html')
@@ -264,7 +303,7 @@ def izmeni_podatke():
             prezime = request.form.get('prezime')
             jmbg = request.form.get('jmbg')
             ime_roditelja = request.form.get('ime_roditelja')
-            datum_rodjenja = request.form.get('datum_rodjenja')
+            datum_rodjenja = konvertuj_datum_format(request.form.get('datum_rodjenja'))
             mesto_rodjenja = request.form.get('mesto_rodjenja')
             adresa = request.form.get('adresa')
             adresa_boravista = request.form.get('adresa_boravista', '')
@@ -278,7 +317,7 @@ def izmeni_podatke():
             adresa_elektora = request.form.get('adresa_elektora')
             opstina_elektora = request.form.get('opstina_elektora')
             adresa_boravista_elektora = request.form.get('adresa_boravista_elektora', '')
-            datum_potpisa = request.form.get('datum_potpisa')
+            datum_potpisa = konvertuj_datum_format(request.form.get('datum_potpisa'))
             mesto_potpisa = request.form.get('mesto_potpisa')
             
             try:
@@ -315,8 +354,15 @@ def izmeni_podatke():
         conn.close()
         
         if osoba:
+            # Konvertuj datume za prikaz
+            osoba_list = list(osoba)
+            if osoba_list[9]:  # datum_rodjenja
+                osoba_list[9] = konvertuj_datum_format(osoba_list[9])
+            if osoba_list[19]:  # datum_potpisa
+                osoba_list[19] = konvertuj_datum_format(osoba_list[19])
+            
             flash(f'Pronađena osoba: {osoba[1]} {osoba[2]}', 'success')
-            return render_template('izmeni.html', osoba=osoba, edit_mode=True)
+            return render_template('izmeni.html', osoba=tuple(osoba_list), edit_mode=True)
         else:
             flash('Osoba sa ovim JMBG-om nije pronađena!', 'error')
     
