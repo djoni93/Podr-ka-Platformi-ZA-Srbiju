@@ -337,7 +337,7 @@ def izmeni_podatke():
                 conn.commit()
                 conn.close()
                 flash('Podaci su uspešno ažurirani!', 'success')
-                return redirect('/izmeni')
+                return redirect('/pretraga')
             except sqlite3.IntegrityError:
                 flash('Osoba sa ovim JMBG-om već postoji!', 'error')
             except Exception as e:
